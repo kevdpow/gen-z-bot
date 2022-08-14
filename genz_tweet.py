@@ -20,10 +20,10 @@ client = tweepy.Client(
 )
 
 
-def read_used_nouns():
-    with open("usedNouns.log", mode="r", encoding="utf-8") as outfile:
-        data = [r.replace("\n", "") for r in outfile.readlines()]
-        return data
+# def read_used_nouns():
+#     with open("usedNouns.log", mode="r", encoding="utf-8") as outfile:
+#         data = [r.replace("\n", "") for r in outfile.readlines()]
+#         return data
 
 
 def write_used_noun(noun):
@@ -33,20 +33,26 @@ def write_used_noun(noun):
 
 
 def send_genz_tweet():
-    usedNouns = read_used_nouns()
-    availableNouns = get_nouns()
-    if len(availableNouns):
-        nouns = [noun for noun in availableNouns if noun
-                 not in usedNouns]
+    # usedNouns = read_used_nouns()
+    nouns = get_nouns()
+    if len(nouns):
         noun = random.choice(nouns)
-        write_used_noun(noun)
-    else:
-        nouns = usedNouns
-        noun = random.choice(nouns)
-    tweet = "does gen z know about {}".format(noun)
-    client.create_tweet(text=tweet)
+        tweet = "does gen z know about {}".format(noun)
+        client.create_tweet(text=tweet)
+    # if len(availableNouns):
+    #     nouns = [noun for noun in availableNouns if noun
+    #              not in usedNouns]
+    #     noun = random.choice(nouns)
+    #     write_used_noun(noun)
+    # else:
+    #     nouns = usedNouns
+    #     noun = random.choice(nouns)
+    # tweet = "does gen z know about {}".format(noun)
+    # client.create_tweet(text=tweet)
 
 
-while True:
-    send_genz_tweet()
-    time.sleep(INTERVAL)
+send_genz_tweet()
+
+# while True:
+#     send_genz_tweet()
+#     time.sleep(INTERVAL)
