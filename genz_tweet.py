@@ -9,8 +9,9 @@ from generate_nouns import get_nouns
 import datetime
 
 date_pattern = '%Y-%m-%d %H:%M:%S.%f'
+r = redis.from_url(os.environ.get("REDIS_URL"))
 
-INTERVAL = 60 * 30
+BOT_INTERVAL = 60 * 28.5
 
 # Authenticate to Twitter
 
@@ -25,7 +26,6 @@ client = tweepy.Client(
 
 
 def get_used_nouns():
-    r = redis.from_url(os.environ.get("REDIS_URL"))
     usedNouns = r.lrange('used_nouns', 0, -1)
     start = r.get("start")
     if start:
@@ -43,28 +43,21 @@ def get_used_nouns():
     return [n.decode("utf-8") for n in usedNouns]
 
 
-def write_used_noun(noun):
-    r = redis.from_url(os.environ.get("REDIS_URL"))
-    p = r.lpush("used_nouns", noun)
-    return p
-
-
 def send_genz_tweet():
     usedNouns = get_used_nouns()
     availableNouns = get_nouns()
-    print(usedNouns)
     if len(availableNouns):
         nouns = [noun for noun in availableNouns if noun
                  not in usedNouns]
         noun = random.choice(nouns)
-        write_used_noun(noun)
+        r.lpush("used_nouns", noun)
     else:
         nouns = usedNouns
         noun = random.choice(nouns)
     tweet = "does gen z know about {}".format(noun)
+    print(tweet)
     client.create_tweet(text=tweet)
 
 
-while True:
+if __name__ == '__main__':
     send_genz_tweet()
-    time.sleep(INTERVAL)
