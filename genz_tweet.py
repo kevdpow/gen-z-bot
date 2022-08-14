@@ -55,8 +55,9 @@ def send_genz_tweet():
         nouns = usedNouns
         noun = random.choice(nouns)
     tweet = "does gen z know about {}".format(noun)
-    print(tweet)
+    print(str(datetime.datetime.now()), tweet)
     client.create_tweet(text=tweet)
+    return
 
 
 if __name__ == '__main__':
